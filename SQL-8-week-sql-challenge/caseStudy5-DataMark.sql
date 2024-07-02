@@ -261,32 +261,5 @@ FROM sales_before_after;
 
 
 -- 3. How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
-WITH sales_comparison AS (SELECT EXTRACT(YEAR FROM week_date) AS year,
-                                 SUM(CASE
-                                         WHEN week_date >= '2018-06-18' AND week_date < '2018-09-10' THEN sales
-                                         ELSE 0 END)          AS sales_2018,
-                                 SUM(CASE
-                                         WHEN week_date >= '2019-06-17' AND week_date < '2019-09-09' THEN sales
-                                         ELSE 0 END)          AS sales_2019,
-                                 SUM(CASE
-                                         WHEN week_date >= '2020-03-16' AND week_date < '2020-06-15' THEN sales
-                                         ELSE 0 END)          AS sales_before_2020,
-                                 SUM(CASE
-                                         WHEN week_date >= '2020-06-15' AND week_date < '2020-09-07' THEN sales
-                                         ELSE 0 END)          AS sales_after_2020
-                          FROM clean_weekly_sales
-                          WHERE EXTRACT(YEAR FROM week_date) IN (2018, 2019, 2020)
-                          GROUP BY EXTRACT(YEAR FROM week_date))
-SELECT year,
-       sales_2018,
-       sales_2019,
-       sales_before_2020,
-       sales_after_2020,
-       sales_before_2020 - COALESCE(sales_2018, 0)                                                          AS sales_diff_before_2020_vs_2018,
-       ROUND(((sales_before_2020 - COALESCE(sales_2018, 0)) / NULLIF(COALESCE(sales_2018, 0), 0)) * 100,
-             2)                                                                                             AS sales_growth_percentage_before_2020_vs_2018,
-       sales_after_2020 - COALESCE(sales_2019, 0)                                                           AS sales_diff_after_2020_vs_2019,
-       ROUND(((sales_after_2020 - COALESCE(sales_2019, 0)) / NULLIF(COALESCE(sales_2019, 0), 0)) * 100,
-             2)                                                                                             AS sales_growth_percentage_after_2020_vs_2019
-FROM sales_comparison;
+
 
